@@ -39,8 +39,10 @@ class BrowserPayment:
 
     def create_checkout_session(self, session_token: str, access_token: str,
                                 device_id: str, chatgpt_proxy: str = None,
-                                billing_country: str = "GB",
-                                billing_currency: str = "GBP") -> dict:
+                                billing_country: str = "US",
+                                billing_currency: str = "USD",
+                                workspace_name: str = "Artizancloud",
+                                seat_quantity: int = 5) -> dict:
         """
         用 ChatGPT API 创建 checkout session, 返回 checkout 数据。
         这一步必须走 ChatGPT API (需要认证)。
@@ -90,18 +92,18 @@ class BrowserPayment:
         body = {
             "plan_name": "chatgptteamplan",
             "team_plan_data": {
-                "workspace_name": "Artizancloud",
+                "workspace_name": workspace_name,
                 "price_interval": "month",
-                "seat_quantity": 5,
+                "seat_quantity": seat_quantity,
             },
             "billing_details": {
                 "country": billing_country,
                 "currency": billing_currency,
             },
-            "cancel_url": "https://chatgpt.com/?promo_campaign=team0dollar#team-pricing",
+            "cancel_url": "https://chatgpt.com/#team-pricing",
             "promo_campaign": {
-                "promo_campaign_id": "team0dollar",
-                "is_coupon_from_query_param": True,
+                "promo_campaign_id": "team-1-month-free",
+                "is_coupon_from_query_param": False,
             },
             "checkout_ui_mode": "custom",
         }
@@ -1546,6 +1548,8 @@ class BrowserPayment:
         billing_state: str = "",
         billing_email: str = "",
         billing_currency: str = "",
+        workspace_name: str = "Artizancloud",
+        seat_quantity: int = 5,
         chatgpt_proxy: str = None,
         timeout: int = 120,
     ) -> dict:
@@ -1570,6 +1574,8 @@ class BrowserPayment:
             chatgpt_proxy=chatgpt_proxy,
             billing_country=billing_country,
             billing_currency=billing_currency,
+            workspace_name=workspace_name,
+            seat_quantity=seat_quantity,
         )
 
         cs_id = checkout_data.get("checkout_session_id", "")
